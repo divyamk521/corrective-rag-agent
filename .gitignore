@@ -1,0 +1,28 @@
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets and local config
+.env
+
+# Data and indexes (large or private; never commit)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/
+data/index/
+data/cache/
+
+# Eval outputs
+data/eval/results/
+data/eval/candidates.jsonl
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
