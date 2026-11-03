@@ -4,7 +4,9 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 # src/crag/config.py -> parents[0]=crag, [1]=src, [2]=repository root
 ROOT = Path(__file__).resolve().parents[2]
@@ -12,15 +14,32 @@ ROOT = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=ROOT / ".env", env_file_encoding="utf-8", extra="ignore"
+        env_file=ROOT / ".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
     )
 
-    # ---- LLM (OpenAI-compatible) ----
-    llm_api_key: str = ""
+    # ---- LLM (Groq) ----
+    llm_api_key: str = Field(
+        default="",
+        validation_alias="GROQ_API_KEY",
+    )
     llm_base_url: str | None = None
-    llm_model: str = "gpt-4o-mini"
-    vision_model: str = "gpt-4o-mini"
-    judge_model: str = "gpt-4o-mini"
+
+    llm_model: str = Field(
+        default="llama-3.3-70b-versatile",
+        validation_alias="GROQ_MODEL",
+    )
+
+    vision_model: str = Field(
+        default="qwen/qwen3.8-27b",
+        validation_alias="GROQ_VISION_MODEL",
+    )
+
+    judge_model: str = Field(
+        default="llama-3.3-70b-versatile",
+        validation_alias="GROQ_JUDGE_MODEL",
+    )
 
     # ---- Web fallback ----
     tavily_api_key: str = ""
@@ -53,8 +72,8 @@ class Settings(BaseSettings):
     final_k: int = 6
 
     # ---- Agent (CRAG) ----
-    ce_high: float = 0.70  # top rerank prob >= this -> "correct" (calibrate on Day 11)
-    ce_low: float = 0.15  # top rerank prob <= this -> "incorrect" (calibrate on Day 11)
+    ce_high: float = 0.70
+    ce_low: float = 0.15
     max_retries: int = 2
     guardrail_threshold: float = 0.80
 

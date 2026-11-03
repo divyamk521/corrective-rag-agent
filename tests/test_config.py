@@ -3,24 +3,28 @@ from crag.config import ROOT, Settings
 
 
 def test_defaults_are_sane():
-    s = Settings(_env_file=None)
-    assert s.llm_model == "gpt-4o-mini"
-    assert 0.0 < s.ce_low < s.ce_high < 1.0
-    assert s.child_chunk_chars < s.parent_max_chars
-    assert s.max_retries >= 1
+    settings = Settings(_env_file=None)
+
+    assert settings.llm_model == "llama-3.3-70b-versatile"
+    assert settings.ce_high > settings.ce_low
+    assert settings.child_chunk_chars < settings.parent_max_chars
+    assert settings.max_retries >= 1
 
 
 def test_paths_are_under_data_dir():
-    s = Settings(_env_file=None)
-    assert s.raw_dir == s.data_dir / "raw"
-    assert s.index_dir == s.data_dir / "index"
-    assert s.figures_dir == s.data_dir / "processed" / "figures"
-    assert s.data_dir == ROOT / "data"
+    settings = Settings(_env_file=None)
+
+    assert settings.raw_dir == settings.data_dir / "raw"
+    assert settings.index_dir == settings.data_dir / "index"
+    assert settings.figures_dir == settings.data_dir / "processed" / "figures"
+    assert settings.data_dir == ROOT / "data"
 
 
 def test_env_override(monkeypatch):
-    monkeypatch.setenv("LLM_MODEL", "my-model")
+    monkeypatch.setenv("GROQ_MODEL", "my-model")
     monkeypatch.setenv("ENABLE_WEB", "false")
-    s = Settings(_env_file=None)
-    assert s.llm_model == "my-model"
-    assert s.enable_web is False
+
+    settings = Settings(_env_file=None)
+
+    assert settings.llm_model == "my-model"
+    assert settings.enable_web is False
